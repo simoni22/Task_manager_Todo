@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task App</title>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 50px auto; padding: 20px; }
+        h1 { color: #333; }
+        form { margin: 20px 0; }
+        input[type="text"] { padding: 8px; width: 400px; font-size: 14px; }
+        button { padding: 8px 16px; font-size: 14px; cursor: pointer; }
+        .filters { margin: 20px 0; }
+        .filters a { margin-right: 10px; text-decoration: none; color: #0066cc; }
+        .filters a.active { font-weight: bold; text-decoration: underline; }
+        .task { padding: 10px; margin: 5px 0; border: 1px solid #ddd; display: flex; align-items: center; }
+        .task.completed { background: #f0f0f0; }
+        .task.completed .text { text-decoration: line-through; color: #888; }
+        .task .text { flex: 1; margin-left: 10px; }
+        input[type="checkbox"] { cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Task App</h1>
+    
+    <form action="/add?filter={{ current_filter }}" method="POST">
+        <input type="text" name="text" placeholder="Add a new task..." required>
+        <button type="submit">Add</button>
+    </form>
+    
+    <div class="filters">
+        <a href="/?filter=all" class="{% if current_filter == 'all' %}active{% endif %}">All</a>
+        <a href="/?filter=active" class="{% if current_filter == 'active' %}active{% endif %}">Active</a>
+        <a href="/?filter=completed" class="{% if current_filter == 'completed' %}active{% endif %}">Completed</a>
+    </div>
+    
+    <div class="tasks">
+        {% for task in tasks %}
+        <div class="task {% if task.completed %}completed{% endif %}">
+            <form action="/toggle/{{ task.id }}?filter={{ current_filter }}" method="GET" style="display: inline; margin: 0;">
+                <input type="checkbox" {% if task.completed %}checked{% endif %} onchange="this.form.submit()">
+            </form>
+            <span class="text">{{ task.text }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
